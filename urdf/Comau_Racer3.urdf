@@ -1,11 +1,41 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="comau_racer3">
 
-	<xacro:property name="width" value="0.6" />
-	<xacro:property name="l_link1tobase" value="0.242" />
-	<xacro:property name="l_link1tobase" value="0.242" />
+	<!-- constants -->
+	<xacro:property name="pi" value="3.141592" />
 
+	<xacro:property name="r_link1" value="0.115" />
+	<xacro:property name="r_link2" value="0.115" />
+	<xacro:property name="r_link3" value="0.075" />
+	<xacro:property name="r_link4" value="${r_link3}" />
+	<xacro:property name="r_link5" value="0.04" />
+	<xacro:property name="r_link6" value="${r_link5}" />
 
+	<xacro:property name="l_base" value="0.0" />
+	<xacro:property name="l_link1" value="0.365" />
+	<xacro:property name="l_link2" value="${0.05+0.270+0.05}" />
+	<xacro:property name="l_link3" value="${0.05+0.30594+0.05}" />
+	<xacro:property name="l_link4" value="${r_link3}" />
+	<xacro:property name="l_link5" value="0.080" />
+
+	<xacro:property name="z_link1tobase" value="0.0" />
+	<xacro:property name="z_link2tolink1" value="0.365" />
+	<xacro:property name="z_link3tolink2" value="0.270" />
+	<xacro:property name="z_link5tolink4" value="-0.30594" />
+	<xacro:property name="x_link5tolink4" value="0.05" />
+
+	<xacro:property name="minangle_link1" value="${-170*pi/180}" />
+	<xacro:property name="maxangle_link1" value="${170*pi/180}" />
+	<xacro:property name="minangle_link2" value="${-95*pi/180}" />
+	<xacro:property name="maxangle_link2" value="${135*pi/180}" />
+	<xacro:property name="minangle_link3" value="${-155*pi/180}" />
+	<xacro:property name="maxangle_link3" value="${90*pi/180}" />
+	<xacro:property name="minangle_link4" value="${-200*pi/180}" />
+	<xacro:property name="maxangle_link4" value="${200*pi/180}" />
+	<xacro:property name="minangle_link5" value="${-125*pi/180}" />
+	<xacro:property name="maxangle_link5" value="${125*pi/180}" />
+	<xacro:property name="minangle_link6" value="${-2700*pi/180}" />
+	<xacro:property name="maxangle_link6" value="${2700*pi/180}" />
 
 	<!-- colors -->
 	<material name="blue">
@@ -18,34 +48,110 @@
     <color rgba="1 1 1 1"/>
   </material>
 
+	<!-- base link -->
   <link name="base_link">
     <visual>
       <geometry>
-        <cylinder length="0.0" radius="0.0"/>
+        <cylinder length="${l_base}" radius="${r_link1}"/>
       </geometry>
-      <material name="blue"/>
+			<origin xyz="0 0 ${l_base/2}" /> 
+      <material name="black"/>
     </visual>
   </link>
 
+	<!-- link 1 -->
   <link name="link1">
     <visual>
       <geometry>
-        <cylinder length="${l_link1tobase}" radius="0.115"/>
+        <cylinder length="${l_link1}" radius="0.115"/>
       </geometry>
-			<origin xyz="0 0 -${l_link1tobase/2}" />
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+			<origin xyz="0 0 ${l_link1/2}" />
       <material name="white"/>
     </visual>
   </link>
 
-
-  <joint name="link1_to_base" type="fixed">
+  <joint name="link1_to_base" type="revolute">
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="${minangle_link1}" upper="${maxangle_link1}" velocity="0.5"/>
+    <origin xyz="0 0 ${z_link1tobase}" />
     <parent link="base_link"/>
     <child link="link1"/>
-    <origin xyz="0 0 ${l_link1tobase}"/>
   </joint>
 
+	<!-- link 2 -->
+  <link name="link2">
+    <visual>
+      <geometry>
+        <cylinder length="${l_link2}" radius="${r_link2}"/>
+      </geometry>
+			<origin xyz="0 0 ${l_link2/2-0.05}" />
+      <material name="white"/>
+    </visual>
+  </link>
 
+  <joint name="link2_to_link1" type="revolute">
+    <axis xyz="0 1 0 "/>
+    <limit effort="1000.0" lower="${minangle_link2}" upper="${maxangle_link2}" velocity="0.5"/>
+    <origin xyz="0 0 ${z_link2tolink1}" />
+    <parent link="link1"/>
+    <child link="link2"/>
+  </joint>
 
+	<!-- link 3 -->
+  <link name="link3">
+    <visual>
+      <geometry>
+        <cylinder length="${l_link3}" radius="${r_link3}"/>
+      </geometry>
+			<origin xyz="0 0 ${l_link3/2-0.05}" />
+      <material name="white"/>
+    </visual>
+  </link>
+
+  <joint name="link3_to_link2" type="revolute">
+    <axis xyz="0 1 0 "/>
+    <limit effort="1000.0" lower="${minangle_link3}" upper="${maxangle_link3}" velocity="0.5"/>
+    <origin rpy="0 0 ${pi}" xyz="0 0 ${z_link3tolink2}" />
+    <parent link="link2"/>
+    <child link="link3"/>
+  </joint>
+
+	<!-- link 4 -->
+  <link name="link4">
+    <visual>
+     	<geometry>
+        <cylinder length="${l_link4}" radius="${r_link4}"/>
+      </geometry>
+			<origin xyz="0 0 ${-l_link3/2+0.05}" />
+      <material name="white"/>
+    </visual>
+  </link>
+
+  <joint name="link4_to_link3" type="revolute">
+    <axis xyz="0 0 1 "/>
+    <limit effort="1000.0" lower="${minangle_link4}" upper="${maxangle_link4}" velocity="0.5"/>
+    <origin rpy="${pi} 0 0" xyz="0 0 0" />
+    <parent link="link3"/>
+    <child link="link4"/>
+  </joint>
+
+	<!-- link 5 -->
+  <link name="link5">
+    <visual>
+     	<geometry>
+        <cylinder length="${l_link5}" radius="${r_link5}"/>
+      </geometry>
+			<origin xyz="0 0 ${l_link5/2}" />
+      <material name="white"/>
+    </visual>
+  </link>
+
+  <joint name="link5_to_link4" type="revolute">
+    <axis xyz="0 1 0"/>
+    <limit effort="1000.0" lower="${minangle_link5}" upper="${maxangle_link5}" velocity="0.5"/>
+    <origin rpy="${-pi} 0 0" xyz="${x_link5tolink4} 0 ${z_link5tolink4}" />
+    <parent link="link4"/>
+    <child link="link5"/>
+  </joint>
 
 </robot>
