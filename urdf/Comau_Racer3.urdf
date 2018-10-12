@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="comau_racer3">
+
+	<xacro:property name="width" value="0.6" />
+	<xacro:property name="l_link1tobase" value="0.242" />
+	<xacro:property name="l_link1tobase" value="0.242" />
+
+
+
+	<!-- colors -->
+	<material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.0" radius="0.0"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="link1">
+    <visual>
+      <geometry>
+        <cylinder length="${l_link1tobase}" radius="0.115"/>
+      </geometry>
+			<origin xyz="0 0 -${l_link1tobase/2}" />
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="white"/>
+    </visual>
+  </link>
+
+
+  <joint name="link1_to_base" type="fixed">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 ${l_link1tobase}"/>
+  </joint>
+
+
+
+
+</robot>
